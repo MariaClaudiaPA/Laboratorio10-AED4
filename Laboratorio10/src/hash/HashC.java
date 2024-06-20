@@ -180,7 +180,6 @@ public class HashC<E extends Comparable<E>> {
             default ->
                 throw new IllegalArgumentException("Método no reconocido: " + method);
         }
-        // Guardar los valores para búsqueda y eliminación futuras
         this.lastMethod = method;
         this.lastDressHash = dressHash;
 
@@ -284,43 +283,33 @@ public class HashC<E extends Comparable<E>> {
     public int metodoCuadrado(int key) {
         int cuadrado = key * key;
         String cuadradoStr = Integer.toString(cuadrado);
-
         int longitud = cuadradoStr.length();
-        int mitad = longitud / 2;
-        int cantidadDigitosCentrales = 2;
 
-        int inicio = mitad - cantidadDigitosCentrales / 2;
-        int fin = inicio + cantidadDigitosCentrales;
-        if (longitud % 2 != 0 && cantidadDigitosCentrales % 2 == 0) {
+        int inicio = (longitud / 2) - 1;
+        int fin = (longitud / 2) + 1;
+
+        if (longitud % 2 != 0) {
             inicio++;
         }
 
         String digitosCentralesStr = cuadradoStr.substring(inicio, fin);
         int digitosCentrales = Integer.parseInt(digitosCentralesStr);
+
         return digitosCentrales % m;
     }
 
     public int metodoPorPliegue(int key) {
         String keyStr = Integer.toString(key);
         int longitud = keyStr.length();
-        int numeroPartes = (int) Math.ceil(longitud / 2.0);
+        int numeroPartes = (int) Math.ceil(longitud / 3.0);
+        int longitudParte = (int) Math.ceil((double) longitud / numeroPartes);
         int suma = 0;
 
-        int tamanoParte = (int) Math.ceil(longitud / (double) numeroPartes);
-        int inicio = 0;
-        int fin = 0;
-
-        for (int i = 0; i < numeroPartes; i++) {
-            inicio = i * tamanoParte;
-            if (i == numeroPartes - 1) {
-                fin = longitud;
-            } else {
-                fin = inicio + tamanoParte;
-            }
-            String parteStr = keyStr.substring(inicio, fin);
-            suma += Integer.parseInt(parteStr);
+        for (int i = 0; i < longitud; i += longitudParte) {
+            String parte = keyStr.substring(i, Math.min(i + longitudParte, longitud));
+            suma += Integer.parseInt(parte);
         }
-        return suma % m;
+        return Math.abs(suma % m);
     }
 
     public void leerArchivo(String archivo, String method, String dressHash) {
