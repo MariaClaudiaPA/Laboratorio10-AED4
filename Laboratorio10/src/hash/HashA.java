@@ -7,21 +7,7 @@ import java.util.ArrayList;
 
 public class HashA<E extends Comparable<E>> {
 
-    protected class Element {
-
-        Register<E> reg;
-
-        public Element(Register<E> reg) {
-            this.reg = reg;
-        }
-
-        @Override
-        public String toString() {
-            return reg.toString();
-        }
-    }
-
-    protected ArrayList<ListLinked<Element>> table;
+    protected ArrayList<ListLinked<Register<E>>> table;
     protected int m;
 
     public HashA() {
@@ -29,18 +15,10 @@ public class HashA<E extends Comparable<E>> {
     }
 
     public HashA(int n) {
-        this.m = n;
+        this.m = encontrarPrimo(n);
         this.table = new ArrayList<>(m);
         for (int i = 0; i < m; i++) {
             this.table.add(new ListLinked<>());
-        }
-    }
-
-    public void setM(int registros) {
-        this.m = registros;
-        this.table = new ArrayList<>(registros); 
-        for (int i = 0; i < registros; i++) {
-            this.table.add(new ListLinked<>()); 
         }
     }
 
@@ -48,36 +26,28 @@ public class HashA<E extends Comparable<E>> {
         return key % m;
     }
 
-    public void insert(int key, E value) {
-        Register<E> reg = new Register<>(key, value);
+    public void insert(int key, Register<E> value) {
         int index = functionHash(key);
-        table.get(index).insert(new Element(reg));
+        ListLinked<Register<E>> list = table.get(index);
+        list.insert(value);
     }
 
-    public E search(int key) {
+    public Register<E> search(int key) {
         int index = functionHash(key);
-        ListLinked<Element> list = table.get(index);
-        Node<Element> actual = list.primero;
-        while (actual != null) {
-            if (actual.getValor().reg.getKey() == key) {
-                return actual.getValor().reg.value;
-            }
-            actual = actual.getSiguiente();
+        ListLinked<Register<E>> list = table.get(index);
+        Register<E> dummy = new Register<>(key, null); // Dummy para buscar por clave
+        int searchIndex = list.search(dummy);
+        if (searchIndex != -1) {
+            return list.get(searchIndex);
         }
         return null;
     }
 
-    public void remove(int key) {
+    public Register<E> remove(int key) {
         int index = functionHash(key);
-        ListLinked<Element> list = table.get(index);
-        Node<Element> actual = list.primero;
-        while (actual != null) {
-            if (actual.getValor().reg.getKey() == key) {
-                list.removeNode(actual.getValor());
-                return;
-            }
-            actual = actual.getSiguiente();
-        }
+        ListLinked<Register<E>> list = table.get(index);
+        Register<E> dummy = new Register<>(key, null); // Dummy para buscar por clave
+        return list.removeNode(dummy);
     }
 
     @Override
@@ -85,15 +55,15 @@ public class HashA<E extends Comparable<E>> {
         StringBuilder sb = new StringBuilder();
         sb.append("D.Real\tD.Hash\tRegister\n");
         int i = 0;
-        for (ListLinked<Element> list : table) {
-            sb.append(i).append("-->\t");
+        for (ListLinked<Register<E>> list : table) {
+            sb.append("\n").append(i).append("-->\t");
             if (list.isEmpty()) {
                 sb.append("vacio\n");
             } else {
-                Node<Element> actual = list.primero;
+                Node<Register<E>> actual = list.primero;
                 while (actual != null) {
-                    Element item = actual.getValor();
-                    sb.append(functionHash(item.reg.getKey())).append("\t").append(item.reg).append("\n");
+                    Register<E> item = actual.getValor();
+                    sb.append(functionHash(item.getKey())).append("\t").append(item).append("\n");
                     actual = actual.getSiguiente();
                 }
             }
@@ -108,23 +78,54 @@ public class HashA<E extends Comparable<E>> {
             while (br.readLine() != null) {
                 contLineas++;
             }
-            setM(contLineas);
+            HashA<E> nuevoHashA = new HashA<>(contLineas);
             br.close();
-            BufferedReader br2 = new BufferedReader(new FileReader(filePath));
-            String line;
-            while ((line = br2.readLine()) != null) {
-                String[] parts = line.split(",");
-                int key = Integer.parseInt(parts[0].trim());
-                String nombre = parts[1].trim();
-                String direccion = parts[2].trim();
-                Empleado empleado = new Empleado(key, nombre, direccion);
-                insert(key, (E) empleado);
+            try ( BufferedReader br2 = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                while ((line = br2.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    int key = Integer.parseInt(parts[0].trim());
+                    String nombre = parts[1].trim();
+                    String direccion = parts[2].trim();
+                    Register<E> register = new Register<>(key, (E) new Empleado(key, nombre, direccion));
+                    nuevoHashA.insert(key, register);
+                }
             }
-            br2.close();
+            this.table = nuevoHashA.table;
+            this.m = nuevoHashA.m;
         } catch (IOException e) {
             System.out.println("Excepcion" + e);
         }
-        
+    }
+
+    private boolean esPrimo(int num) {
+        if (num <= 1) {
+            return false;
+        }
+        for (int i = 2; i * i <= num; i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int encontrarPrimo(int num) {
+        if (num <= 2) {
+            return 2;
+        }
+
+        if (esPrimo(num)) {
+            return num;
+        }
+
+        for (int i = num - 1; i >= 2; i--) {
+            if (esPrimo(i)) {
+                return i;
+            }
+        }
+
+        return 2;
     }
 
 }

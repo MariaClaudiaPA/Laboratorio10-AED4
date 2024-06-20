@@ -65,31 +65,50 @@ public class ListLinked<T> implements TDAList<T> {
     }
 
     @Override
-    public void removeNode(T borrarItem) {
-        if (primero != null) {
-            if (primero.getValor().equals(borrarItem)) {
-                primero = primero.getSiguiente();
-            } else {
-                Node<T> actual = primero;
-                while (actual.getSiguiente() != null) {
-                    if (actual.getSiguiente().getValor().equals(borrarItem)) {
-                        actual.setSiguiente(actual.getSiguiente().getSiguiente());
-                        return;
-                    }
-                    actual = actual.getSiguiente();
+    public T removeNode(T borrarItem) {
+    if (primero != null) {
+        if (primero.getValor().equals(borrarItem)) {
+            T valorEliminado = primero.getValor();
+            primero = primero.getSiguiente();
+            return valorEliminado;
+        } else {
+            Node<T> actual = primero;
+            while (actual.getSiguiente() != null) {
+                if (actual.getSiguiente().getValor().equals(borrarItem)) {
+                    T valorEliminado = actual.getSiguiente().getValor();
+                    actual.setSiguiente(actual.getSiguiente().getSiguiente());
+                    return valorEliminado;
                 }
+                actual = actual.getSiguiente();
             }
         }
     }
+    return null; // Retorna null si no se encuentra el elemento a eliminar
+}
+
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         Node<T> actual = primero;
         while (actual != null) {
-            sb.append(actual.getValor()).append(" ");
+            sb.append(actual.getValor()).append("");
             actual = actual.getSiguiente();
         }
         return sb.toString();
     }  
+    
+     
+    public T get(int index) {
+        Node<T> actual = primero;
+        int currentIndex = 0;
+        while (actual != null) {
+            if (currentIndex == index) {
+                return actual.getValor();
+            }
+            actual = actual.getSiguiente();
+            currentIndex++;
+        }
+        return null;
+    }
 }

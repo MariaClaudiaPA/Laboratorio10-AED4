@@ -1,6 +1,7 @@
 package hash;
 
 public class Register<E> implements Comparable<Register<E>> {
+
     protected int key;
     protected E value;
 
@@ -25,6 +26,10 @@ public class Register<E> implements Comparable<Register<E>> {
 
     public int getKey() {
         return this.key;
+    }
+
+    public E getValue() {
+        return value;
     }
 
     @Override

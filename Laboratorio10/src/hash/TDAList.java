@@ -8,7 +8,7 @@ public interface TDAList<T> {
     int search(T x);
     void insertFirst(T x);
     void insert(T x);
-    void removeNode(T x);
+    T removeNode(T x);
     
 
 }

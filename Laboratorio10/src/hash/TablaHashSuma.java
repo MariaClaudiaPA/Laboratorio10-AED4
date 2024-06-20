@@ -1,50 +1,41 @@
 package hash;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TablaHashSuma {
-    private Map<Integer, Integer> tabla;
 
-    public TablaHashSuma() {
-        this.tabla = new HashMap<>();
+    private HashA<Integer> tablaHash;
+
+    public TablaHashSuma(int tamano) {
+        this.tablaHash = new HashA<>(tamano);
     }
 
-    public void insertar(int clave) {
-        tabla.put(clave, clave);
-    }
-
-    public boolean buscar(int clave) {
-        return tabla.containsKey(clave);
-    }
-
-    public List<int[]> encontrarPares(int[] lista, int sumaObjetivo) {
+    public List<int[]> encontrarPares(int[] lista, int suma) {
         List<int[]> pares = new ArrayList<>();
+
         for (int numero : lista) {
-            int complemento = sumaObjetivo - numero;
-            if (buscar(complemento)) {
+            int complemento = suma - numero;
+            Register<Integer> complementoEncontrado = tablaHash.search(complemento);
+            if (complementoEncontrado != null) {
                 pares.add(new int[]{complemento, numero});
             }
-            insertar(numero);
+            tablaHash.insert(numero, new Register<>(numero, numero));
         }
+
         return pares;
     }
 
     public static void main(String[] args) {
-        int[] lista = {1, 2, 3, 4, 5};
-        int suma = 6;
+        int[] lista = {1, 2};
+        int suma = 3;
 
-        TablaHashSuma tabla = new TablaHashSuma();
+        TablaHashSuma tabla = new TablaHashSuma(10);
         List<int[]> resultado = tabla.encontrarPares(lista, suma);
 
         System.out.print("Pares que suman " + suma + ": ");
         for (int[] par : resultado) {
             System.out.print("(" + par[0] + ", " + par[1] + ") ");
         }
-        // Output esperado: Pares que suman 6: (2, 4) (1, 5)
     }
 }
-
-

@@ -9,16 +9,18 @@ public class TestC {
         String[] nombres = {"Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Mallory"};
 
         for (int i = 0; i < claves.length; i++) {
-            tablaHash.insert(claves[i], nombres[i], "linear", "hash");
+            tablaHash.insert(claves[i], nombres[i], "double", "hash");
         }
 
+        
         System.out.println("Tabla Hash Cerrado:");
         System.out.println(tablaHash);
-        String resultado = tablaHash.search(7, "linear");
+        String resultado = tablaHash.search(7);
         System.out.println("Resultado de la búsqueda: " + resultado);
-        tablaHash.remove(7, "linear");
+        tablaHash.remove(7);
         System.out.println(tablaHash);
-
+    }
+}
 //        HashC<String> tablaHash2 = new HashC<>(100);
 //        int k1 = 7259;
 //        int h_k1 = tablaHash2.metodoCuadrado(k1);
@@ -32,6 +34,5 @@ public class TestC {
 //
 //        System.out.println("Tabla Hash:");
 //        System.out.println(tablaHash2);
-    }
+//    }
 
-}
