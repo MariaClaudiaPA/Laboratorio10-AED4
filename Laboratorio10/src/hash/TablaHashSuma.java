@@ -2,6 +2,11 @@ package hash;
 
 import java.util.ArrayList;
 import java.util.List;
+class NumeroInvalidoException extends RuntimeException {
+    public NumeroInvalidoException(String mensaje) {
+        super(mensaje);
+    }
+}
 
 public class TablaHashSuma {
 
@@ -12,6 +17,15 @@ public class TablaHashSuma {
     }
 
     public List<int[]> encontrarPares(int[] lista, int suma) {
+        int maximoEnLista = Integer.MIN_VALUE;
+        for (int numero : lista) {
+            if (numero > maximoEnLista) {
+                maximoEnLista = numero;
+            }
+        }
+        if (suma <= maximoEnLista) {
+            throw new NumeroInvalidoException("La suma debe ser mayor que todos los números en la lista.");
+        }
         List<int[]> pares = new ArrayList<>();
 
         for (int numero : lista) {
@@ -22,20 +36,22 @@ public class TablaHashSuma {
             }
             tablaHash.insert(numero, new Register<>(numero, numero));
         }
-
         return pares;
     }
 
     public static void main(String[] args) {
-        int[] lista = {1, 2};
-        int suma = 3;
+        int[] lista = {1, 2, 3, 4, 5};
+        int suma = 6;
 
         TablaHashSuma tabla = new TablaHashSuma(10);
-        List<int[]> resultado = tabla.encontrarPares(lista, suma);
-
-        System.out.print("Pares que suman " + suma + ": ");
-        for (int[] par : resultado) {
-            System.out.print("(" + par[0] + ", " + par[1] + ") ");
+        try {
+            List<int[]> resultado = tabla.encontrarPares(lista, suma);
+            System.out.print("Pares que suman " + suma + ": ");
+            for (int[] par : resultado) {
+                System.out.print("(" + par[0] + ", " + par[1] + ") ");
+            }
+        } catch (NumeroInvalidoException e) {
+            System.out.println("Excepción: " + e.getMessage());
         }
     }
 }

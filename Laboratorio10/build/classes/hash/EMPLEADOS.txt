@@ -1,10 +1,6 @@
-1001,Maria Garcia,Av. Libertador 123
-2002,Carlos Martinez,Calle 8 de Octubre 456
-3003,Sofia Rodriguez,Av. Brasil 789
-4004,Jose Gonzalez,Calle San Martin 101
-4004,Ana Perez,Av. de Mayo 202
-5005,Luis Lopez,Calle Rivadavia 303
-7963,Valentina Fernandez,Av. Paseo Colon 404
-4587,Miguel Sanchez,Calle Sarmiento 505
-7774,Isabella Ramirez,Av. Corrientes 606
-1220,Mateo Torres,Calle Florida 707
+10
+1001, Maria Garcia, Av. Libertador 123
+2002, Carlos Martinez, Calle 8 de Octubre 456
+3003, Sofia Rodriguez, Av. Brasil 789
+4004, Jose Gonzalez, Calle San Martin 101
+3455, Luis Lopez, Calle Rivadavia 303

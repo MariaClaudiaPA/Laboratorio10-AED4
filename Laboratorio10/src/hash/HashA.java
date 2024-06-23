@@ -23,6 +23,7 @@ public class HashA<E extends Comparable<E>> {
     }
 
     private int functionHash(int key) {
+//        return (key % m) + (int) (Math.ceil(m * 0.4));
         return key % m;
     }
 
@@ -35,8 +36,8 @@ public class HashA<E extends Comparable<E>> {
     public Register<E> search(int key) {
         int index = functionHash(key);
         ListLinked<Register<E>> list = table.get(index);
-        Register<E> dummy = new Register<>(key, null); // Dummy para buscar por clave
-        int searchIndex = list.search(dummy);
+        Register<E> aux = new Register<>(key, null);
+        int searchIndex = list.search(aux);
         if (searchIndex != -1) {
             return list.get(searchIndex);
         }
@@ -46,8 +47,8 @@ public class HashA<E extends Comparable<E>> {
     public Register<E> remove(int key) {
         int index = functionHash(key);
         ListLinked<Register<E>> list = table.get(index);
-        Register<E> dummy = new Register<>(key, null); // Dummy para buscar por clave
-        return list.removeNode(dummy);
+        Register<E> aux = new Register<>(key, null);
+        return list.removeNode(aux);
     }
 
     @Override
@@ -58,12 +59,12 @@ public class HashA<E extends Comparable<E>> {
         for (ListLinked<Register<E>> list : table) {
             sb.append("\n").append(i).append("-->\t");
             if (list.isEmpty()) {
-                sb.append("vacio\n");
+                sb.append("vacio");
             } else {
                 Node<Register<E>> actual = list.primero;
                 while (actual != null) {
                     Register<E> item = actual.getValor();
-                    sb.append(functionHash(item.getKey())).append("\t").append(item).append("\n");
+                    sb.append(functionHash(item.getKey())).append("\t").append(item).append("->");
                     actual = actual.getSiguiente();
                 }
             }
@@ -114,17 +115,14 @@ public class HashA<E extends Comparable<E>> {
         if (num <= 2) {
             return 2;
         }
-
         if (esPrimo(num)) {
             return num;
         }
-
         for (int i = num - 1; i >= 2; i--) {
             if (esPrimo(i)) {
                 return i;
             }
         }
-
         return 2;
     }
 

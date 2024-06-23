@@ -7,7 +7,6 @@ public class TablaHashFrecuencia {
     public TablaHashFrecuencia(int tamano) {
         tablaHash = new HashC<>(tamano);
     }
-
  
     public void insertarPalabra(String palabra) {
         int hashCode = palabra.hashCode();
@@ -18,8 +17,8 @@ public class TablaHashFrecuencia {
             tablaHash.insert(hashCode, contador, "linear", "default");
         } else {
             contador.incrementar();
-            tablaHash.remove(hashCode); // Remover el contador antiguo
-            tablaHash.insert(hashCode, contador, "linear", "default"); // Insertar el contador actualizado
+            tablaHash.remove(hashCode); 
+            tablaHash.insert(hashCode, contador, "linear", "default"); 
         }
     }
     public int obtenerFrecuencia(String palabra) {
@@ -63,11 +62,9 @@ public class TablaHashFrecuencia {
         String texto = "hola mundo hola adios mundo mundo";
         String[] palabras = texto.split(" ");
         TablaHashFrecuencia tabla = new TablaHashFrecuencia(10);
-
         for (String palabra : palabras) {
             tabla.insertarPalabra(palabra);
         }
-
         System.out.println("Frecuencia de 'hola': " + tabla.obtenerFrecuencia("hola")); // Output: 2
         System.out.println("Frecuencia de 'mundo': " + tabla.obtenerFrecuencia("mundo")); // Output: 3
         System.out.println("Frecuencia de 'adios': " + tabla.obtenerFrecuencia("adios")); // Output: 1

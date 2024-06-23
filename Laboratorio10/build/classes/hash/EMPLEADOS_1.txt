@@ -1,0 +1,3 @@
+6399, Maria Garcia, Calle A, Ciudad X
+2784, Carlos Martinez, Calle B, Ciudad Y
+8754, Sofia Rodriguez, Calle C, Ciudad Z

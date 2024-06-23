@@ -30,24 +30,22 @@ public class HashC<E extends Comparable<E>> {
     }
 
     private int functionHash(int key) {
-        return key % m;
+        return (key % m);
+//        return (key % m) + (int) (Math.ceil(m * 0.4));
     }
 
     private int obtenerPrimo(int n) {
         if (n <= 2) {
             return 2;
         }
-
         if (esPrimo(n)) {
             return n;
         }
-
         for (int i = n - 1; i >= 2; i--) {
             if (esPrimo(i)) {
                 return i;
             }
         }
-
         return 2;
     }
 
@@ -63,10 +61,6 @@ public class HashC<E extends Comparable<E>> {
         return true;
     }
 
-    private int hash2(int key) {
-        return m - (key % m);
-    }
-
     private int linearProbing(int dressHash, int key) {
         int i = 0;
         int newIndex = (dressHash + i) % m;
@@ -77,7 +71,6 @@ public class HashC<E extends Comparable<E>> {
                 throw new IllegalStateException("Tabla llena, no se puede insertar más elementos.");
             }
         }
-
         return newIndex;
     }
 
@@ -92,6 +85,10 @@ public class HashC<E extends Comparable<E>> {
             }
         }
         return newIndex;
+    }
+
+    private int hash2(int key) {
+        return m - (key % m);
     }
 
     private int doubleHashing(int dressHash, int key) {
@@ -119,15 +116,16 @@ public class HashC<E extends Comparable<E>> {
         }
         return newIndex;
     }
+
     private String lastMethod;
     private String lastDressHash;
 
-    public void insert(int key, E value, String method, String dressHash) {
+    public void insert(int key, E value, String metodo, String dressHash) {
         Register<E> reg = new Register<>(key, value);
         int index;
         int hashValue;
 
-        switch (method) {
+        switch (metodo) {
             case "linear" -> {
                 hashValue = switch (dressHash) {
                     case "pliegue" ->
@@ -178,11 +176,10 @@ public class HashC<E extends Comparable<E>> {
                 break;
             }
             default ->
-                throw new IllegalArgumentException("Método no reconocido: " + method);
+                throw new IllegalArgumentException("Método no reconocido: " + metodo);
         }
-        this.lastMethod = method;
+        this.lastMethod = metodo;
         this.lastDressHash = dressHash;
-
         table.set(index, new Element(1, reg));
     }
 
@@ -222,13 +219,12 @@ public class HashC<E extends Comparable<E>> {
                     throw new IllegalArgumentException("Método no reconocido: " + lastMethod);
             }
         }
-
         return null;
     }
 
     public void remove(int key) {
         if (lastMethod == null || lastDressHash == null) {
-            throw new IllegalStateException("No se ha realizado ninguna inserción previa. No hay nada que eliminar");
+            throw new IllegalStateException("No se ha realizado ninguna inserción previa, no hay nada que eliminar");
         }
 
         int dressHash;
@@ -272,7 +268,16 @@ public class HashC<E extends Comparable<E>> {
         for (Element item : table) {
             s += (i++) + "-->\t";
             if (item.mark == 1) {
-                s += functionHash(item.reg.key) + "\t" + item.reg + "\n";
+                int hashValue;
+                switch (lastDressHash) {
+                    case "pliegue" ->
+                        hashValue = metodoPorPliegue(item.reg.key);
+                    case "cuadrado" ->
+                        hashValue = metodoCuadrado(item.reg.key);
+                    default ->
+                        hashValue = functionHash(item.reg.key);
+                }
+                s += hashValue + "\t" + item.reg + "\n";
             } else {
                 s += "vacio\n";
             }
@@ -284,24 +289,22 @@ public class HashC<E extends Comparable<E>> {
         int cuadrado = key * key;
         String cuadradoStr = Integer.toString(cuadrado);
         int longitud = cuadradoStr.length();
+        int inicio, fin;
 
-        int inicio = (longitud / 2) - 1;
-        int fin = (longitud / 2) + 1;
-
-        if (longitud % 2 != 0) {
-            inicio++;
-        }
+        int mLength = Integer.toString(m).length();
+        inicio = (longitud - mLength) / 2;
+        fin = inicio + mLength;
 
         String digitosCentralesStr = cuadradoStr.substring(inicio, fin);
         int digitosCentrales = Integer.parseInt(digitosCentralesStr);
-
         return digitosCentrales % m;
     }
 
     public int metodoPorPliegue(int key) {
         String keyStr = Integer.toString(key);
         int longitud = keyStr.length();
-        int numeroPartes = (int) Math.ceil(longitud / 3.0);
+
+        int numeroPartes = (int) Math.ceil((double) longitud / Integer.toString(m).length());
         int longitudParte = (int) Math.ceil((double) longitud / numeroPartes);
         int suma = 0;
 
@@ -312,8 +315,23 @@ public class HashC<E extends Comparable<E>> {
         return Math.abs(suma % m);
     }
 
+    public static int obtenerCantidadElementos(String archivo) {
+        try ( BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String primeraLinea = br.readLine();
+            if (primeraLinea == null) {
+                System.out.println("Error: El archivo está vacío o no contiene la cantidad de elementos.");
+                return 0;
+            }
+            return Integer.parseInt(primeraLinea.trim());
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error al obtener la cantidad de elementos del archivo: " + e.getMessage());
+            return 0;
+        }
+    }
+
     public void leerArchivo(String archivo, String method, String dressHash) {
         try ( BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            br.readLine();
             String linea;
             while ((linea = br.readLine()) != null) {
                 String[] campos = linea.split("[,\\s]+");
@@ -331,5 +349,4 @@ public class HashC<E extends Comparable<E>> {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
     }
-
 }
